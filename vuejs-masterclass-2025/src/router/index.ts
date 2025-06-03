@@ -1,37 +1,9 @@
-import HomeView from '@/views/HomeView.vue'
-// import ProjectsView from '@/views/ProjectsView.vue'
-import { createRouter, createWebHistory } from 'vue-router'
 
+import { createRouter, createWebHistory } from 'vue-router'
+import {routes} from 'vue-router/auto-routes'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-
-    {
-      path: '/',
-      name: 'home',
-      // component: HomeView
-      // component: HomeView
-      component: ()=>import('@/views/HomeView.vue') // This is best strategy. because by doing this it only load this page not the remaining or other pages. it saves memory and speed up.
-    },
-    {
-      path: '/projects',
-      name: 'projects',
-      // component: ProjectsView
-      component: () =>import('@/views/ProjectsView.vue')
-    },
-    {
-      // /projects/id
-      path: '/projects/:id',
-      name: 'single-project',
-      // component: ProjectsView
-      component: () =>import('@/views/SingleProjectView.vue')
-    },
-
-    /*
-    Note: 
-    For routing inside the routes array we have to pass one object for one routes. and each object will have 3 properties like 'path','name','component'.
-    */
-  ],
+ routes
 })
 
 export default router
