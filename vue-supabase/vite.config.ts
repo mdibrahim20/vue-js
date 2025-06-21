@@ -1,5 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
-
+import path from 'node:path'
+import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
@@ -9,7 +10,14 @@ import VueRouter from 'unplugin-vue-router/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      template:{
+        compilerOptions:{
+          isCustomElement: (element)=>element.startsWith('iconify-icon')
+        }
+      }
+    }),
+    tailwindcss(),
     vueJsx(),
     vueDevTools(),
     VueRouter({
@@ -18,7 +26,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
 })
