@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import axios from 'axios'
 import { ref, onMounted } from 'vue'
-
-interface Task {
-  id: string
-  name: string
-  status: string
-  description: string
-  due_date: string
-  collaborators: string[] // assuming this is an array of user names/IDs
-}
-
-const tasks = ref<Task[]>([])
+import { h } from 'vue'
+import type { Tables } from '../../../database/types'
+import type { ColumnDef } from '@tanstack/vue-table'
+import DataTable from '@/components/ui/data-table/DataTable.vue'
+import { RouterLink } from 'vue-router'
+const tasks = ref<Tables<'tasks'>[] | null>(null)
 
 onMounted(async () => {
   try {
@@ -22,41 +17,56 @@ onMounted(async () => {
     console.error('Error fetching tasks:', err)
   }
 })
+
+const columns: ColumnDef<Tables<'tasks'>>[] = [
+  {
+    accessorKey: 'name',
+    header: () => h('div', { class: 'text-left' }, 'Name'),
+    cell: ({ row }) => {
+      return h(
+        RouterLink,
+        { to: `/tasks/${row.original.id}`, class: 'text-left font-medium' },
+        row.getValue('name'),
+      )
+    },
+  },
+  {
+    accessorKey: 'status',
+    header: () => h('div', { class: 'text-left' }, 'Status'),
+    cell: ({ row }) => {
+      return h('div', { class: 'text-left font-medium' }, row.getValue('status'))
+    },
+  },
+  {
+    accessorKey: 'dueDate',
+    header: () => h('div', { class: 'text-left' }, 'Due Date'),
+    cell: ({ row }) => {
+      return h('div', { class: 'text-left font-medium' }, row.getValue('dueDate'))
+    },
+  },
+  {
+    accessorKey: 'projectId',
+    header: () => h('div', { class: 'text-left' }, 'Project'),
+    cell: ({ row }) => {
+      return h('div', { class: 'text-left font-medium' }, row.getValue('projectId'))
+    },
+  },
+  {
+    accessorKey: 'collaborators',
+    header: () => h('div', { class: 'text-left' }, 'Collaborators'),
+    cell: ({ row }) => {
+      return h(
+        'div',
+        { class: 'text-left font-medium' },
+        JSON.stringify(row.getValue('collaborators')),
+      )
+    },
+  },
+]
 </script>
 
 <template>
-  <div class="p-6">
-    <h1 class="text-2xl font-bold mb-4">Tasks</h1>
-
-    <div class="overflow-x-auto">
-      <table class="min-w-full border border-gray-300 shadow-sm rounded-lg">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="text-left px-4 py-2 border-b">ID</th>
-            <th class="text-left px-4 py-2 border-b">Name</th>
-            <th class="text-left px-4 py-2 border-b">Status</th>
-            <th class="text-left px-4 py-2 border-b">Description</th>
-            <th class="text-left px-4 py-2 border-b">Due Date</th>
-            <th class="text-left px-4 py-2 border-b">Collaborators</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="task in tasks" :key="task.id" class="hover:bg-gray-50">
-            <td class="px-4 py-2 border-b">{{ task.id }}</td>
-            <td class="px-4 py-2 border-b font-medium">{{ task.name }}</td>
-            <td class="px-4 py-2 border-b capitalize">{{ task.status }}</td>
-            <td class="px-4 py-2 border-b text-sm">{{ task.description }}</td>
-            <td class="px-4 py-2 border-b">{{ task.due_date }}</td>
-            <td class="px-4 py-2 border-b">
-              <ul>
-                <li v-for="user in task.collaborators" :key="user">{{ user }}</li>
-              </ul>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <DataTable v-if="tasks" :columns="columns" :data="tasks" />
 </template>
 
 <style scoped></style>

@@ -16,6 +16,7 @@
     "@iconify/vue": "^5.0.0",
     "@supabase/supabase-js": "^2.43.4",
     "@tailwindcss/vite": "^4.1.10",
+    "@tanstack/vue-table": "^8.21.3",
     "@vueuse/core": "^13.4.0",
     "axios": "^1.10.0",
     "class-variance-authority": "^0.7.1",
