@@ -1,31 +1,32 @@
 <script setup lang="ts">
-import { supabase } from '@/lib/supabaseClient'
-import { ref } from 'vue'
-import type {Tables} from '../../../database/types'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+interface Project {
+  id: string
+  name?: string
+  // Add any other fields your PocketBase "projects" collection has
+}
 
+const projects = ref<Project[]>([])
 
-
-const projects = ref<Tables<'projects'>[] | null>(null)
-;(async () => {
-  const { data, error } = await supabase.from('projects').select('*')
-  if (error) {
-    console.error('Error fetching projects:', error)
-    return []
+onMounted(async () => {
+  try {
+    const response = await axios.get('http://localhost:3001/projects')
+    projects.value = response.data
+    console.log('Projects:', projects.value)
+  } catch (err) {
+    console.error('Error fetching projects:', err)
   }
-  projects.value = data
-  //  return data
-  console.log('Projects:', projects)
-  // You can now use `projects.value` in your template
-})()
+})
 </script>
-
 
 <template>
   <div>
     <h1>Projects</h1>
-    <li v-for="project in projects" :key="project.id">
-      {{ project.id }}
-    </li>
+    {{ console.log(projects) }}
+    <ul>
+      <li v-for="project in projects" :key="project.id">{{ project.id }} - {{ project.name }}</li>
+    </ul>
   </div>
 </template>
 

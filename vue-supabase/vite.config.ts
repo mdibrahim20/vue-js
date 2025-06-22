@@ -13,7 +13,7 @@ export default defineConfig({
     vue({
       template:{
         compilerOptions:{
-          isCustomElement: (element)=>element.startsWith('iconify-icon')
+          isCustomElement: (tag)=>tag.startsWith('iconify-icon')
         }
       }
     }),

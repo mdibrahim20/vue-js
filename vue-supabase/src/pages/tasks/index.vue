@@ -1,22 +1,28 @@
 <script setup lang="ts">
-import { supabase } from '@/lib/supabaseClient'
-import { ref } from 'vue'
-import type {Tables} from '../../../database/types'
+import axios from 'axios'
+import { ref, onMounted } from 'vue'
 
+interface Task {
+  id: string
+  name: string
+  status: string
+  description: string
+  due_date: string
+  collaborators: string[] // assuming this is an array of user names/IDs
+}
 
+const tasks = ref<Task[]>([])
 
-const tasks = ref<Tables<'tasks'>[] | null>(null)
-;(async () => {
-  const { data, error } = await supabase.from('tasks').select('*')
-  if (error) {
-    console.error('Error fetching tasks:', error)
-    return []
+onMounted(async () => {
+  try {
+    const response = await axios.get('http://localhost:3001/tasks')
+    tasks.value = response.data
+    console.log('Tasks:', tasks.value)
+  } catch (err) {
+    console.error('Error fetching tasks:', err)
   }
-  tasks.value = data
-  console.log('Projects:', tasks)
-})()
+})
 </script>
-
 
 <template>
   <div class="p-6">
@@ -52,6 +58,5 @@ const tasks = ref<Tables<'tasks'>[] | null>(null)
     </div>
   </div>
 </template>
-
 
 <style scoped></style>
